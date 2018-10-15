@@ -1,0 +1,19 @@
+{
+  "name": "storefrontcloud-cli",
+  "version": "0.0.1",
+  "description": "This is StorefrontCloud.io command line instance manager",
+  "main": "scripts/cli.js",
+  "repository": "https://gitlab.vuestorefront.io/StorefrontCloud/storefrontcloud-cli.git",
+  "author": "pkarw <pkarwatka@divante.pl>",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "cli-table": "^0.3.1",
+    "commander": "^2.19.0",
+    "inquirer": "^6.2.0",
+    "jsonfile": "^5.0.0",
+    "kubernetes-client": "git+https://github.com/godaddy/kubernetes-client.git",
+    "shelljs": "^0.8.2",
+    "winston": "^3.1.0"
+  }
+}
