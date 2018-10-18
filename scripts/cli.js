@@ -76,16 +76,20 @@ const remoteExec = (remoteCmd, CONTEXT) => {
   } 
 }
 
-const outputPodsList = (items) => {
-  const table = new Table({
-    head: [' ', 'POD name', 'Role', 'State', 'Start time'],
-    colWidths: [3, 45, 10, 10, 25]
-  });
-
-  for (let pod of items) {
-    table.push([pod.metadata.name === CONTEXT.current_pod ? '*' : '', pod.metadata.name, pod.role ? pod.role : '', pod.status.phase, pod.status.startTime])
+const outputPodsList = (items, format = '') => {
+  if (format == 'json') {
+    console.log(JSON.stringify(items))
+  } else {
+    const table = new Table({
+      head: [' ', 'POD name', 'Role', 'State', 'Start time'],
+      colWidths: [3, 45, 10, 10, 25]
+    });
+  
+    for (let pod of items) {
+      table.push([pod.metadata.name === CONTEXT.current_pod ? '*' : '', pod.metadata.name, pod.role ? pod.role : '', pod.status.phase, pod.status.startTime])
+    }  
+    console.log(table.toString())
   }
-  console.log(table.toString())
 }
 const guessByRole = (role, PODS_CACHE, CONTEXT) => {
   if (role === 'pod') return CONTEXT.current_pod
@@ -165,7 +169,7 @@ const guessRole = (name) => {
   return ''
 }
 
-const cachePodsList = (CONTEXT, PODS_CACHE, rollCurrentPod = false) => {
+const cachePodsList = (CONTEXT, PODS_CACHE, rollCurrentPod = false, format = '') => {
   const client = apiClient(CONTEXT)
   client.api.v1.namespaces(CONTEXT.current_namespace).pods.get().then((result) => {
       PODS_CACHE = result.body.items
@@ -181,14 +185,14 @@ const cachePodsList = (CONTEXT, PODS_CACHE, rollCurrentPod = false) => {
           })
           if (newCurrentPod) {
             CONTEXT.current_pod = newCurrentPod.metadata.name
-            console.log('Current POD has been switched to the ' + chalk.bold.green(CONTEXT.current_pod))
+            if (format !== 'json') console.log('Current POD has been switched to the ' + chalk.bold.green(CONTEXT.current_pod))
             jsonFile.writeFileSync(CONFIG_PATH, CONTEXT)
           }
         }       
       }
       jsonFile.writeFileSync(PODS_CACHE_PATH, PODS_CACHE)
-      console.log('PODs cache saved to ' + chalk.green.bold(PODS_CACHE_PATH))
-      outputPodsList(PODS_CACHE)
+      if (format !== 'json') console.log('PODs cache saved to ' + chalk.green.bold(PODS_CACHE_PATH))
+      outputPodsList(PODS_CACHE, format)
   })      
 }
 
@@ -253,7 +257,7 @@ program
   .option('--format <format>', 'output format, by default human readable - other option is "json"', 'human')
   .action((cmd) => {
   try {
-      cachePodsList(CONTEXT, PODS_CACHE, false)
+      cachePodsList(Object.assign({}, CONTEXT, { current_namespace: cmd.ns }), PODS_CACHE, false, cmd.format)
     } catch (e) {
       logger.error(e)
       process.exit(-1)
