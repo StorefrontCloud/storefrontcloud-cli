@@ -86,7 +86,7 @@ const outputPodsList = (items, format = '') => {
     });
   
     for (let pod of items) {
-      table.push([pod.metadata.name === CONTEXT.current_pod ? '*' : '', pod.metadata.name, pod.role ? pod.role : '', pod.status.phase, pod.status.startTime])
+      table.push([pod.metadata.name === CONTEXT.current_pod ? '*' : '', pod.metadata.name, pod.role ? pod.role : '', pod.status.phase, pod.status.startTime ? pod.status.startTime : ''])
     }  
     console.log(table.toString())
   }
