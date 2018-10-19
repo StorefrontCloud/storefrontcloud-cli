@@ -76,7 +76,7 @@ const remoteExec = (remoteCmd, CONTEXT) => {
   } 
 }
 
-const outputPodsList = (items, format = '') => {
+const outputPodsList = (items, CONTEXT, format = '') => {
   if (format == 'json') {
     console.log(JSON.stringify(items))
   } else {
@@ -192,11 +192,11 @@ const cachePodsList = (CONTEXT, PODS_CACHE, rollCurrentPod = false, format = '')
       }
       jsonFile.writeFileSync(PODS_CACHE_PATH, PODS_CACHE)
       if (format !== 'json') console.log('PODs cache saved to ' + chalk.green.bold(PODS_CACHE_PATH))
-      outputPodsList(PODS_CACHE, format)
+      outputPodsList(PODS_CACHE, CONTEXT, format)
   })      
 }
 
-const updateConfig = (answers, rollCurrentPod = false) => {
+const updateConfig = (answers, CONTEXT, rollCurrentPod = false) => {
   try {
     CONTEXT = Object.assign({}, CONTEXT, answers)
     if (!CONTEXT.is_kubeconfig_a_file) {
@@ -313,7 +313,7 @@ program
   setupCmdContext(args, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
   kubeCtlCmd(['delete', 'pod'], [], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
   console.log('The POD has been successfully deleted. Please use ' + chalk.green.bold('node scripts/cli.js pod') + ' to select new default POD')
-  updateConfig({}, true)
+  updateConfig({}, CONTEXT, true)
 }) 
 
 /**
@@ -426,7 +426,7 @@ program
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', null)
 .action((cmd) => {
   if (cmd.ns) {
-    updateConfig({ current_namespace: cmd.ns })
+    updateConfig({ current_namespace: cmd.ns }, CONTEXT)
   } else {
     const questions = [
       {
@@ -443,7 +443,7 @@ program
         }
       }
     ]
-    inquirer.prompt(questions).then(answers => updateConfig(answers))
+    inquirer.prompt(questions).then(answers => updateConfig(answers, CONTEXT))
   }
 }) 
 
@@ -457,7 +457,7 @@ program
   setupCmdContext(null, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
 
   if (cmd.pod && cmd.pod !== CONTEXT.current_pod) {
-    updateConfig({ current_pod: cmd.pod })
+    updateConfig({ current_pod: cmd.pod }, CONTEXT)
   } else {
     try {
       const client = apiClient(CONTEXT)
@@ -480,7 +480,7 @@ program
               }
             }
           ]
-          inquirer.prompt(questions).then(answers => updateConfig(answers))
+          inquirer.prompt(questions).then(answers => updateConfig(answers, CONTEXT))
         })
       } catch (e) {
         console.error(e)
@@ -571,7 +571,7 @@ program
         }
       }
     ]
-    inquirer.prompt(questions).then(answers => updateConfig(answers))
+    inquirer.prompt(questions).then(answers => updateConfig(answers, CONTEXT))
   })
 
 program
