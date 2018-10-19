@@ -14,6 +14,7 @@
     "jsonfile": "^5.0.0",
     "kubernetes-client": "git+https://github.com/godaddy/kubernetes-client.git",
     "shelljs": "^0.8.2",
+    "vuestic-installer": "^0.1.1",
     "winston": "^3.1.0"
   }
 }
