@@ -341,6 +341,18 @@ program
   kubeCtlCmdRaw(['cp'], remoteCmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
 }) 
 
+/**
+ * EXECUTE THE KUBECTL logs
+ */
+program
+.command('podLogs [args...]')
+.option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--pod <pod>', 'pod of storefrontcloud.io', CONTEXT.current_pod)
+.action((remoteCmd, cmd) => {
+  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
+  kubeCtlCmdRaw(['logs'], [cmd.pod], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+}) 
+
 
 /**
  * EXECUTE THE ElasticDump
