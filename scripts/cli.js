@@ -433,12 +433,27 @@ program
 .command('import [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
 .option('--pod <pod>', 'pod of storefrontcloud.io', guessApiPodName(PODS_CACHE, CONTEXT))
-.action((remoteCmd, cmd) => {
+.action((remoteCmd, cmd) => {  
   console.log('Preparing Magento2 products import on ' + chalk.bold.green(cmd.pod))
   console.log('Please make sure that You configured the M2 API credentials in the vue-storefront-api repository: ' + chalk.yellow.bold())
   remoteExec(['yarn', 'mage2vs', 'import'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
   console.log('\n\Magento2 products import has been successfully executed')
 }) 
+
+
+/**
+ * Clear the SSR OUTPUT cache
+ */
+program
+.command('clearCache [args...]')
+.option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--pod <pod>', 'pod of storefrontcloud.io', guessFrontPodName(PODS_CACHE, CONTEXT))
+.action((remoteCmd, cmd) => {
+  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
+  remoteExec(['npm', 'run', 'cache', 'clear'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  console.log('\n\SSR output cache has been cleared')
+}) 
+
 
 
 
