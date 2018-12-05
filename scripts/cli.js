@@ -369,6 +369,18 @@ program
  * EXECUTE THE KUBECTL logs
  */
 program
+.command('installLogs [args...]')
+.option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--pod <pod>', 'pod of storefrontcloud.io', CONTEXT.current_pod)
+.action((remoteCmd, cmd) => {
+  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
+  kubeCtlCmdRaw(['logs', '-c', 'install'], [cmd.pod], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+}) 
+
+/**
+ * EXECUTE THE KUBECTL logs
+ */
+program
 .command('describe [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
 .option('--pod <pod>', 'pod of storefrontcloud.io', CONTEXT.current_pod)
