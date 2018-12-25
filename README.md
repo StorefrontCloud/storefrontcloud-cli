@@ -6,7 +6,7 @@
 
 <img src="doc/logo.png" />
 
-Storefront Cloud CLI is a command line management cloud for <a href="https://storefrontcloud.io">Storefront Cloud</a>. Storefront Cloud is a <a href="https://github.com/DivanteLtd/vue-storefront">Vue Storefront</a> hosted solution brought to You by <a href="https://divante.co">Vue Storefront founding team</a>.
+Storefront Cloud CLI is a command line management tool for <a href="https://storefrontcloud.io">Storefront Cloud</a>. Storefront Cloud is a <a href="https://github.com/DivanteLtd/vue-storefront">Vue Storefront</a> hosted solution brought to You by <a href="https://divante.co">Vue Storefront founding team</a>.
 
 This tool allows You to manage the remote server cluster and perform all the management operations like:
  - Code Deployments (including Zero-downtime deployment scenarios),
