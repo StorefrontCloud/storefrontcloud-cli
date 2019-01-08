@@ -32,6 +32,7 @@ const logger = createLogger({
 const KUBECONFIG_PATH = path.resolve('.kube.config')
 const CONFIG_PATH = path.resolve('.storefrontcloud.config')
 const PODS_CACHE_PATH = path.resolve('.storefrontcloud.pods.cache')
+const PHASE_RUNNING = 'Running'
 let PODS_CACHE = []
 let CONTEXT = { // defaults
   is_kubeconfig_a_file: true,
@@ -93,7 +94,11 @@ const outputPodsList = (items, CONTEXT, format = '') => {
 }
 const guessByRole = (role, PODS_CACHE, CONTEXT) => {
   if (role === 'pod') return CONTEXT.current_pod
-  const filteredPods = PODS_CACHE.filter(i => i.role === role)
+  const filteredPods = PODS_CACHE.filter(i => i.role === role).sort((podA, podB) => {
+    if (podA.status.phase === podB.status.phase) return 0
+    if (podA.status.phase === PHASE_RUNNING) return -1
+    return 1
+  })
   if (filteredPods.length > 0) return filteredPods[0].metadata.name; else return role
 }
 
