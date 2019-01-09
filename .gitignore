@@ -2,3 +2,5 @@ catalog2.json
 kubectl
 .kube.config
 .storefrontcloud.config
+*.cache
+/node_modules/
