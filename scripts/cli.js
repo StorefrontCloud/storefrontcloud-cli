@@ -254,10 +254,11 @@ const apiClient = (storefrontConfig) => {
 program
   .command('pods')
   .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+  .option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
   .option('--format <format>', 'output format, by default human readable - other option is "json"', 'human')
   .action((cmd) => {
   try {
-      cachePodsList(Object.assign({}, CONTEXT, { current_namespace: cmd.ns }), PODS_CACHE, false, cmd.format)
+      cachePodsList(Object.assign({}, CONTEXT, { current_namespace: cmd.ns, kubeconfig_file: cmd.kubeConfig }), PODS_CACHE, false, cmd.format)
     } catch (e) {
       logger.error(e)
       process.exit(-1)
@@ -296,10 +297,11 @@ program
 program
 .command('exec [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'pod of storefrontcloud.io', CONTEXT.current_pod)
 .action((remoteCmd, cmd) => {
-  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
-  remoteExec(remoteCmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }), PODS_CACHE)
+  remoteExec(remoteCmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
 })
 
 /**
@@ -308,10 +310,11 @@ program
 program
 .command('deploy [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'pod of storefrontcloud.io', CONTEXT.current_pod)
 .action((args, cmd) => {
-  setupCmdContext(args, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
-  kubeCtlCmd(['delete', 'pod'], [], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  setupCmdContext(args, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }), PODS_CACHE)
+  kubeCtlCmd(['delete', 'pod'], [], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
   console.log('The POD has been successfully deleted. Please use ' + chalk.green.bold('node scripts/cli.js pod') + ' to select new default POD')
   updateConfig({}, CONTEXT, true)
 }) 
@@ -322,10 +325,11 @@ program
 program
 .command('logs [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'pod of storefrontcloud.io', CONTEXT.current_pod)
 .action((remoteCmd, cmd) => {
-  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
-  remoteExec(['yarn', 'pm2', 'logs', ...remoteCmd], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }), PODS_CACHE)
+  remoteExec(['yarn', 'pm2', 'logs', ...remoteCmd], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
 }) 
 
 
@@ -335,10 +339,11 @@ program
 program
 .command('cp [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'pod of storefrontcloud.io', CONTEXT.current_pod)
 .action((remoteCmd, cmd) => {
-  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
-  kubeCtlCmdRaw(['cp'], remoteCmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }), PODS_CACHE)
+  kubeCtlCmdRaw(['cp'], remoteCmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
 }) 
 
 /**
@@ -347,10 +352,11 @@ program
 program
 .command('podLogs [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'pod of storefrontcloud.io', CONTEXT.current_pod)
 .action((remoteCmd, cmd) => {
-  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
-  kubeCtlCmdRaw(['logs'], [cmd.pod], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }), PODS_CACHE)
+  kubeCtlCmdRaw(['logs'], [cmd.pod], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
 }) 
 
 /**
@@ -359,10 +365,11 @@ program
 program
 .command('buildLogs [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'pod of storefrontcloud.io', CONTEXT.current_pod)
 .action((remoteCmd, cmd) => {
-  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
-  kubeCtlCmdRaw(['logs', '-c', 'build'], [cmd.pod], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }), PODS_CACHE)
+  kubeCtlCmdRaw(['logs', '-c', 'build'], [cmd.pod], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
 }) 
 
 /**
@@ -371,10 +378,11 @@ program
 program
 .command('installLogs [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'pod of storefrontcloud.io', CONTEXT.current_pod)
 .action((remoteCmd, cmd) => {
-  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
-  kubeCtlCmdRaw(['logs', '-c', 'install'], [cmd.pod], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }), PODS_CACHE)
+  kubeCtlCmdRaw(['logs', '-c', 'install'], [cmd.pod], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
 }) 
 
 /**
@@ -383,10 +391,11 @@ program
 program
 .command('describe [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'pod of storefrontcloud.io', CONTEXT.current_pod)
 .action((remoteCmd, cmd) => {
-  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
-  kubeCtlCmdRaw(['describe'], [cmd.pod], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }), PODS_CACHE)
+  kubeCtlCmdRaw(['describe'], [cmd.pod], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
 }) 
 
 
@@ -396,14 +405,15 @@ program
 program
 .command('dump [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'pod of storefrontcloud.io', guessApiPodName(PODS_CACHE, CONTEXT))
 .option('--output <outputFile>', 'outputFile name', 'catalog.json')
 .action((remoteCmd, cmd) => {
   console.log('Preparing ElasticSearch dump on ' + chalk.bold.green(cmd.pod))
   shell.exec(`rm ${cmd.output}`)
-  remoteExec(['rm', '/var/www/var/catalog.json'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
-  remoteExec(['yarn', 'dump'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
-  kubeCtlCmdRaw(['cp'], ['pod:/var/www/var/catalog.json', cmd.output], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  remoteExec(['rm', '/var/www/var/catalog.json'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
+  remoteExec(['yarn', 'dump'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
+  kubeCtlCmdRaw(['cp'], ['pod:/var/www/var/catalog.json', cmd.output], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
   console.log('\n\nElasticSearch dump has been stored in local file: ' + chalk.green.bold(cmd.output))
 }) 
 
@@ -414,14 +424,15 @@ program
 program
 .command('restore [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'pod of storefrontcloud.io', guessApiPodName(PODS_CACHE, CONTEXT))
 .option('--input <inputFile>', 'inputFile name', 'catalog.json')
 .action((remoteCmd, cmd) => {
   console.log('Restoring ElasticSearch dump on ' + chalk.bold.green(cmd.pod))
-  remoteExec(['rm', '/var/www/var/catalog.json'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
-  kubeCtlCmdRaw(['cp'], [cmd.input, 'pod:/var/www/var/catalog.json'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
-  remoteExec(['yarn', 'restore2main'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
-  remoteExec(['yarn', 'db', 'rebuild'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  remoteExec(['rm', '/var/www/var/catalog.json'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
+  kubeCtlCmdRaw(['cp'], [cmd.input, 'pod:/var/www/var/catalog.json'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
+  remoteExec(['yarn', 'restore2main'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
+  remoteExec(['yarn', 'db', 'rebuild'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
   console.log('\n\nElasticSearch dump has been restored from local file: ' + chalk.green.bold(cmd.input))
 }) 
 
@@ -432,11 +443,12 @@ program
 program
 .command('import [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'pod of storefrontcloud.io', guessApiPodName(PODS_CACHE, CONTEXT))
 .action((remoteCmd, cmd) => {  
   console.log('Preparing Magento2 products import on ' + chalk.bold.green(cmd.pod))
   console.log('Please make sure that You configured the M2 API credentials in the vue-storefront-api repository: ' + chalk.yellow.bold())
-  remoteExec(['yarn', 'mage2vs', 'import'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  remoteExec(['yarn', 'mage2vs', 'import'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
   console.log('\n\Magento2 products import has been successfully executed')
 }) 
 
@@ -447,10 +459,11 @@ program
 program
 .command('clearCache [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'pod of storefrontcloud.io', guessFrontPodName(PODS_CACHE, CONTEXT))
 .action((remoteCmd, cmd) => {
-  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
-  remoteExec(['npm', 'run', 'cache', 'clear'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }), PODS_CACHE)
+  remoteExec(['npm', 'run', 'cache', 'clear'], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
   console.log('\n\SSR output cache has been cleared')
 }) 
 
@@ -463,10 +476,11 @@ program
 program
 .command('yarn [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'pod of storefrontcloud.io', CONTEXT.current_pod)
 .action((remoteCmd, cmd) => {
-  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
-  remoteExec(['yarn', ...remoteCmd], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }), PODS_CACHE)
+  remoteExec(['yarn', ...remoteCmd], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
 }) 
 
 /**
@@ -475,10 +489,11 @@ program
 program
 .command('pm2 [args...]')
 .option('--ns <nameSpace>', 'nameSpace of storefrontcloud.io', CONTEXT.current_namespace)
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'pod of storefrontcloud.io', CONTEXT.current_pod)
 .action((remoteCmd, cmd) => {
-  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
-  remoteExec(['yarn', 'pm2', ...remoteCmd], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }))
+  setupCmdContext(remoteCmd, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }), PODS_CACHE)
+  remoteExec(['yarn', 'pm2', ...remoteCmd], assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }))
 }) 
 
  /**
@@ -515,9 +530,10 @@ program
  */
 program
 .command('pod')
+.option('--kubeConfig <kubeConfig>', 'kubeCofnig path', CONTEXT.kubeconfig_file)
 .option('--pod <pod>', 'POD of storefrontcloud.io', CONTEXT.current_pod)
 .action((cmd) => {
-  setupCmdContext(null, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod }), PODS_CACHE)
+  setupCmdContext(null, cmd, assignContext({ current_namespace: cmd.ns, current_pod: cmd.pod, kubeconfig_file: cmd.kubeConfig }), PODS_CACHE)
 
   if (cmd.pod && cmd.pod !== CONTEXT.current_pod) {
     updateConfig({ current_pod: cmd.pod }, CONTEXT)
