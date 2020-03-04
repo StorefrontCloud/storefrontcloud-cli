@@ -71,7 +71,7 @@ The namespaces are bound to the public URL addresses:
 
 ### Setup
 
-Shortly after You register Your account on the <a href="https://storefrontcloud.io">storefrontcloud.io</a> You should receive a contact request from the Cloud Team. Then after agreeing on the service terms and conditions Cloud Team will provide You with:
+Shortly after you register your account on the <a href="https://storefrontcloud.io">storefrontcloud.io</a>, you should receive a contact request from the Cloud Team. Then after agreeing on the service terms and conditions Cloud Team will provide You with:
 
 - **kube.config** file that You can paste or import to this tool for getting access to Your Kubernetes cluster,
 - **login and password** to the <a href="https://code.storefrontcloud.io">Storefront Cloud Code Access</a> portal.
@@ -82,7 +82,7 @@ The setup steps, getting access to Your cloud:
 First, install `storefrontcloud-cli` (requirements: `node 8.x+, yarn`):
 
 ```bash
-git clone https://github.com/StorefrontCloud/storefrontcloud-cli.git`
+git clone https://github.com/StorefrontCloud/storefrontcloud-cli.git
 cd storefrontcloud-cli
 yarn install
 ```
