@@ -353,7 +353,7 @@ node scripts/cli.js pm2 reload api --pod=api
 ```
 
 **Please note:** PM2 process manager has been installed on the PODs with roles of `api` and `front`. You may run:
-**Please note:** The PM2 process names are set to: `server` on the `front` POD and `api` on the `api` POD. Additionally there is the `o2m` PM2 handle runningo n the `api` PODs to transfer the orders between Vue Storefront and Magento2.
+**Please note:** The PM2 process names are set to: `server` on the `front` POD and `api` on the `api` POD. Additionally there is the `o2m` PM2 handle running on the `api` PODs to transfer the orders between Vue Storefront and Magento2.
 
 <img src="doc/reload-command.png" />
 
